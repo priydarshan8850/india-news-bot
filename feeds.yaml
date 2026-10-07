@@ -1,0 +1,84 @@
+# =============================================================================
+# News sources. All entries below were probed and WORKED on 2026-10-07.
+# Re-check anytime:  python scripts/probe_feeds.py
+# =============================================================================
+
+# --- Websites (RSS/Atom) ------------------------------------------------------
+# (Firstpost, Moneycontrol, The Wire, Business Standard, Deccan Herald,
+#  Telegraph and News18's websites block plain feed clients - skipped.)
+rss:
+  - name: "The Hindu - National"
+    url: "https://www.thehindu.com/news/national/feeder/default.rss"
+  - name: "Indian Express - India"
+    url: "https://indianexpress.com/section/india/feed/"
+  - name: "NDTV - India"
+    url: "https://feeds.feedburner.com/ndtvnews-india-news"
+  - name: "Hindustan Times - India"
+    url: "https://www.hindustantimes.com/feeds/rss/india-news/rssfeed.xml"
+  - name: "Times of India - India"
+    url: "https://timesofindia.indiatimes.com/rssfeeds/-2128936835.cms"
+  - name: "Livemint - News"
+    url: "https://www.livemint.com/rss/news"
+  - name: "India Today - Home"
+    url: "https://www.indiatoday.in/rss/home"
+  - name: "Zee News - India"
+    url: "https://zeenews.india.com/rss/india-national-news.xml"
+  - name: "Economic Times - Top Stories"
+    url: "https://economictimes.indiatimes.com/rssfeedstopstories.cms"
+  - name: "Scroll.in"
+    url: "https://feeds.feedburner.com/ScrollinArticles.rss"
+  - name: "The Hindu BusinessLine - News"
+    url: "https://www.thehindubusinessline.com/news/feeder/default.rss"
+
+# --- Instagram -----------------------------------------------------------------
+# Instagram has NO official free feed API, and scraping violates its ToS.
+# Optional unofficial route: run your own RSSHub instance (https://docs.rsshub.app)
+# and add its output as a normal RSS feed, e.g.:
+#   - name: "Instagram - ndtv (via RSSHub)"
+#     url: "https://YOUR-RSSHUB-HOST/instagram/user/ndtv"
+
+# --- Telegram (public channels via the t.me/s/<name> web preview) --------------
+# Probed 2026-10. Squatted handles (@ndtv, @ndtvindia, @news18, @businessstandard...)
+# and preview-disabled channels were skipped. Re-check any handle with:
+#   python scripts/probe_channels.py @handle
+# Note: check each channel's rules about redistribution before using content.
+telegram_channels:
+  - indianexpress
+  - hindustantimes
+  - livemint
+  - cnnnews18
+  - scroll_in
+  - moneycontrolcom
+  - zeenews
+# NOTE: @indiatodayin was removed - it reposts old archive stories (2021-22)
+# which would make the channel look fake. India Today is still covered via
+# RSS + YouTube. Always check a new channel for FRESH content before adding.
+
+# --- YouTube -------------------------------------------------------------------
+# Keyless: every YouTube channel has a public RSS feed. Resolve handles with:
+#   python scripts/probe_youtube.py @handle
+# We post the video title + link; we do NOT download videos (copyright - Phase 3).
+youtube_channels:
+  - name: "India Today"
+    channel_id: "UCYPvAwZP8pZhSMW8qs7cVCw"
+  - name: "NDTV World"
+    channel_id: "UCXBD5iG5cr4ZYZ99K-fmDHg"
+  - name: "ABP NEWS"
+    channel_id: "UCRWFSbif-RFENbBrSiez1DA"
+  - name: "WION"
+    channel_id: "UC_gUM8rL-Lrg6O3adPW9K1g"
+  - name: "Firstpost"
+    channel_id: "UCz8QaiQxApLq8sLNcszYyJw"
+  - name: "News18 India"
+    channel_id: "UCPP3etACgdUWvizcES1dJ8Q"
+  - name: "Zee News"
+    channel_id: "UCIvaYmXn910QMdemBG3v1pQ"
+  - name: "Hindustan Times"
+    channel_id: "UCm7lHFkt2yB_WzL67aruVBQ"
+
+# --- X (Twitter) - OPTIONAL, requires a PAID API tier ---------------------------
+# The free X tier cannot read other accounts' posts. Enable by setting
+# X_BEARER_TOKEN in .env.
+x_accounts: []
+#  - ANI
+#  - PTI_News

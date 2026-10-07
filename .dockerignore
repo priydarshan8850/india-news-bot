@@ -1,0 +1,22 @@
+# Never ship secrets or local state inside the image.
+.env
+.venv
+venv
+
+__pycache__/
+*.pyc
+
+*.db
+*.db-wal
+*.db-shm
+dryrun.db*
+
+.git/
+.github/
+.vscode/
+
+queue/
+
+scripts/probe_*.py
+SETUP_GUIDE.md
+CLOUD_DEPLOY.md

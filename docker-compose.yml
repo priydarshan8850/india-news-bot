@@ -1,0 +1,19 @@
+# One-command deployment for a VPS / mini-PC:
+#   docker compose up -d --build
+#   docker compose logs -f
+#
+# The bot's SQLite file lives in the "botdata" volume, so restarts and
+# rebuilds never lose the story history (that is what prevents repeats).
+services:
+  newsbot:
+    build: .
+    container_name: india-news-bot
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      DB_PATH: /data/newsbot.db
+    volumes:
+      - botdata:/data
+
+volumes:
+  botdata:

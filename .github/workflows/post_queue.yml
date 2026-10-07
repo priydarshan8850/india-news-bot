@@ -1,0 +1,42 @@
+# Posts one queued story to the Telegram channel every 5 minutes.
+# Runs on GitHub's servers - your PC can be completely off.
+# The queue is stocked from the PC with:  push_queue.bat
+name: Post queued news
+
+on:
+  schedule:
+    - cron: "*/5 * * * *"   # every 5 minutes (UTC)
+  workflow_dispatch: {}
+
+concurrency:
+  group: post-queue
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  post:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+      TELEGRAM_FREE_CHANNEL: ${{ secrets.TELEGRAM_FREE_CHANNEL }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Send the next queued post
+        run: python3 scripts/action_send_next.py
+
+      - name: Save the queue cursor
+        run: |
+          if [ -n "$(git status --porcelain queue/state.json)" ]; then
+            git config user.name "india-news-bot"
+            git config user.email "india-news-bot@users.noreply.github.com"
+            git pull --rebase --autostash
+            git add queue/state.json
+            git commit -m "queue: advance cursor"
+            git push
+          else
+            echo "State unchanged (queue empty or send failed)."
+          fi

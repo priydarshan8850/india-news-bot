@@ -1,0 +1,23 @@
+# Fly.io deployment - one tiny always-on machine in Mumbai (bom).
+# Deploy:  fly deploy --ha=false
+# The bot restarts automatically if it ever crashes (24x7 news checking).
+
+app = "india-news-nationalist-bot"
+primary_region = "bom"
+
+[build]
+
+[env]
+  DB_PATH = "/data/newsbot.db"
+  PYTHONUNBUFFERED = "1"
+
+[mounts]
+  source = "botdata"
+  destination = "/data"
+
+[[vm]]
+  size = "shared-cpu-1x"
+  memory = "512mb"
+
+[[restart]]
+  policy = "always"

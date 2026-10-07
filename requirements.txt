@@ -1,0 +1,21 @@
+# Telegram bot framework. The [job-queue] extra provides the APScheduler-based
+# scheduler we use for the 24x7 collection/publishing cycle.
+python-telegram-bot[job-queue]>=21.6
+
+# News collection
+feedparser>=6.0.11
+beautifulsoup4>=4.12.3      # parses the t.me/s/<channel> public web preview
+PyYAML>=6.0.1
+httpx>=0.27.0               # posting to Telegram + optional X API calls
+
+# LLM. DeepSeek exposes an OpenAI-compatible API, so the standard SDK works.
+# The same client also talks to a local Ollama server (see .env.example).
+openai>=1.35.0
+
+# Config / TLS
+python-dotenv>=1.0.1
+truststore>=0.9.1           # corporate HTTPS inspection fix (same as AIRREV)
+
+# Optional: only if you prefer Telethon over the public web preview for
+# reading Telegram channels (needs a user account + api_id/api_hash).
+# telethon>=1.36.0
