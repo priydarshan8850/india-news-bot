@@ -14,11 +14,12 @@ concurrency:
 
 permissions:
   contents: write
+  actions: write
 
 jobs:
   post:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
     env:
       TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
       TELEGRAM_FREE_CHANNEL: ${{ secrets.TELEGRAM_FREE_CHANNEL }}
@@ -40,3 +41,27 @@ jobs:
           else
             echo "State unchanged (queue empty or send failed)."
           fi
+
+      # Self-sustaining chain: after ~5 minutes this run wakes the next one,
+      # so posting never depends on GitHub's cron scheduler being on time.
+      # The cron trigger stays as a safety net; the throttle in the sender
+      # prevents any double posts.
+      - name: Keep the 5-minute chain alive
+        if: always()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          sleep 270
+          PENDING=$(curl -s -H "Authorization: Bearer $GH_TOKEN" \
+            "https://api.github.com/repos/${{ github.repository }}/actions/workflows/post_queue.yml/runs?per_page=50" \
+            | jq -r --arg cur "${{ github.run_id }}" \
+              '[.workflow_runs[] | select((.status=="in_progress" or .status=="queued") and (.id|tostring)!=$cur)] | length')
+          if [ "$PENDING" -gt 0 ]; then
+            echo "Another run is already pending ($PENDING) - the chain continues there."
+            exit 0
+          fi
+          curl -s -X POST -H "Authorization: Bearer $GH_TOKEN" \
+            -H "Accept: application/vnd.github+json" \
+            "https://api.github.com/repos/${{ github.repository }}/actions/workflows/post_queue.yml/dispatches" \
+            -d '{"ref":"main"}'
+          echo "Next run dispatched - the chain continues."

@@ -39,7 +39,7 @@ Stop everything with `stop_bot.bat` (bot + auto-queue together).
 | Topic | Detail |
 |---|---|
 | 💰 Cost | **₹0** — free on a public GitHub repository (no card, no bills) |
-| ⏱ Timing | GitHub's scheduler can jitter a few minutes (often +1–5 min) |
+| ⏱ Timing | A self-sustaining ~5-minute chain (each run wakes the next) - independent of GitHub's delayed scheduler; cron kept as backup, throttle prevents double posts |
 | 🔁 No repeats | Exported stories are marked in the local DB — the PC bot and future batches never repeat them |
 | ♻️ 60-day rule | GitHub disables unused scheduled workflows — ours commits every send, so it stays alive |
 | 👀 PC-on overlap | While the PC bot runs *and* the queue drains you may see up to ~2 posts / 5 min. The daily cap makes the PC bot pause automatically after an export |

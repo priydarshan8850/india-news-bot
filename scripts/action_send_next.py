@@ -82,6 +82,14 @@ def main() -> int:
         print(f"Queue empty ({index}/{len(posts)}) - top up with push_queue.bat on the PC.")
         return 0
 
+    # Throttle: never post more often than ~5 minutes, no matter how many runs
+    # arrive (cron + the self-chaining run). Extra runs simply skip.
+    now_epoch = time.time()
+    last_sent_epoch = int(state.get("last_sent_epoch", 0) or 0)
+    if last_sent_epoch and (now_epoch - last_sent_epoch) < 260:
+        print(f"Throttled: only {int(now_epoch - last_sent_epoch)}s since the last send (<260s).")
+        return 0
+
     item = posts[index]
     api = f"https://api.telegram.org/bot{token}"
     sent_ok = False
@@ -104,6 +112,9 @@ def main() -> int:
     state["next"] = index + 1
     state["last_attempt_at"] = time.strftime("%Y-%m-%d %H:%M:%S", time.gmtime())
     state["last_result"] = "ok" if sent_ok else "failed"
+    if sent_ok:
+        state["last_sent_epoch"] = int(time.time())
+        state["last_sent_at"] = time.strftime("%Y-%m-%d %H:%M:%S", time.gmtime())
     STATE_FILE.write_text(json.dumps(state, indent=1), encoding="utf-8")
     print(f"Cursor -> {state['next']}/{len(posts)}")
     return 0 if sent_ok else 1
