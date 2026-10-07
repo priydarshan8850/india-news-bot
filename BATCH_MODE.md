@@ -21,6 +21,19 @@ as the queue lasts (300 stories ≈ **25 hours**), while your PC can be off.
 
 Top up any time by running `push_queue.bat` again — it only appends new stories.
 
+## Keep it fully automatic (`auto_queue.bat`)
+
+Double-click **`auto_queue.bat`** once (or just use `start_bot.bat`, which
+starts it too): a helper then runs **every 20 minutes while the PC is on** —
+it exports new stories and pushes them to GitHub automatically. You rarely
+need `push_queue.bat` by hand any more.
+
+The queue keeps a **~24 h stock** (288 stories): that is how long the cloud can
+keep posting when the PC goes off, and it bounds how old the oldest queued
+story can be when it is sent. New stories flow in as the stock drains.
+
+Stop everything with `stop_bot.bat` (bot + auto-queue together).
+
 ## Good to know
 
 | Topic | Detail |
