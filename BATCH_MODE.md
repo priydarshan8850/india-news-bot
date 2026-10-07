@@ -49,7 +49,9 @@ Stop everything with `stop_bot.bat` (bot + auto-queue together).
 ## Files
 
 - `queue/posts.json` — ready-to-send posts (public repo: headlines only, no secrets)
-- `queue/state.json` — cursor: which post goes next
+- `queue/state.json` — Telegram cursor: which post goes next
+- `queue/x_state.json` — X (Twitter) cursor + daily counter
+- `X_MODE.md` — affordable X/Twitter posting (~15 text-only tweets/day)
 - `.github/workflows/post_queue.yml` — the every-5-minutes sender
 - `scripts/export_queue.py` — stocks the queue from the local database
 - `scripts/action_send_next.py` — executed by the GitHub runner

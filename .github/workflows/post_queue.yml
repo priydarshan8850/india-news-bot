@@ -29,14 +29,22 @@ jobs:
       - name: Send the next queued post
         run: python3 scripts/action_send_next.py
 
-      - name: Save the queue cursor
+      - name: Tweet a top story (X Mode, if due)
+        env:
+          X_API_KEY: ${{ secrets.X_API_KEY }}
+          X_API_SECRET: ${{ secrets.X_API_SECRET }}
+          X_ACCESS_TOKEN: ${{ secrets.X_ACCESS_TOKEN }}
+          X_ACCESS_SECRET: ${{ secrets.X_ACCESS_SECRET }}
+        run: python3 scripts/action_tweet_next.py
+
+      - name: Save the queue cursors
         run: |
-          if [ -n "$(git status --porcelain queue/state.json)" ]; then
+          if [ -n "$(git status --porcelain queue/)" ]; then
             git config user.name "india-news-bot"
             git config user.email "india-news-bot@users.noreply.github.com"
             git pull --rebase --autostash
-            git add queue/state.json
-            git commit -m "queue: advance cursor"
+            git add queue/
+            git commit -m "queue: advance cursors"
             git push
           else
             echo "State unchanged (queue empty or send failed)."
