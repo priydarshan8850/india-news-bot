@@ -1,5 +1,7 @@
 {
- "next": 1,
- "last_attempt_at": "2026-10-07 17:44:24",
- "last_result": "ok"
+ "next": 2,
+ "last_attempt_at": "2026-10-07 17:55:26",
+ "last_result": "ok",
+ "last_sent_epoch": 1791395726,
+ "last_sent_at": "2026-10-07 17:55:26"
 }
