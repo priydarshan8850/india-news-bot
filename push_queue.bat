@@ -5,6 +5,7 @@ cd /d "%~dp0"
 
 "C:\Users\priyd\AppData\Local\Programs\Python\Python313\python.exe" scripts\export_queue.py
 
+git pull --rebase --autostash
 git add queue/ scripts/ .github/ BATCH_MODE.md push_queue.bat
 git commit -m "queue: top up" || echo (nothing new to commit)
 git push
