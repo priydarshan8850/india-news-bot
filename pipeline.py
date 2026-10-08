@@ -11,7 +11,7 @@ from __future__ import annotations
 import json
 import logging
 import time
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 import db
@@ -86,12 +86,18 @@ def run_collect(settings: Settings | None = None) -> dict:
 
     stats = {
         "collected": 0, "new": 0, "duplicates": 0,
-        "analyzed": 0, "failed": 0, "recovered": 0,
+        "analyzed": 0, "failed": 0, "recovered": 0, "old_skipped": 0,
     }
 
     # 1. Collect -------------------------------------------------------------
     items = collect_all(settings)
     stats["collected"] = len(items)
+
+    # Skip stale items from sources that repost archives (some Telegram channels
+    # mix old posts into their feed). They waste AI analysis and can never be
+    # published anyway (the publish window is max_article_age_hours).
+    cutoff = (datetime.now(timezone.utc) - timedelta(hours=settings.max_article_age_hours)
+              ).strftime("%Y-%m-%d %H:%M:%S")
 
     # 2. Store new URLs ------------------------------------------------------
     # Snapshot recent titles BEFORE inserting this batch: otherwise every new
@@ -101,6 +107,9 @@ def run_collect(settings: Settings | None = None) -> dict:
     new_rows: list[tuple[int, object]] = []
     for item in items:
         if not item.url or not item.title:
+            continue
+        if item.published_at and item.published_at < cutoff:
+            stats["old_skipped"] += 1
             continue
         article_id, was_new = db.insert_new_article(item)
         if was_new:
