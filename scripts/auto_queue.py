@@ -32,6 +32,16 @@ def git(*args: str, check: bool = True) -> subprocess.CompletedProcess:
 
 def cycle() -> None:
     stamp = time.strftime("%H:%M:%S")
+
+    # Sync FIRST so the exporter sees the true cloud cursor (it advances with
+    # every posted story). Without this, a stale local cursor can make the
+    # "buffer full" check skip a needed top-up.
+    try:
+        git("pull", "--rebase", "--autostash")
+    except Exception as exc:  # noqa: BLE001
+        print(f"[{stamp}] git pull failed, retrying next cycle: {exc}")
+        return
+
     export = subprocess.run(
         [PY, str(EXPORT)], cwd=ROOT, capture_output=True, text=True, timeout=900
     )
@@ -40,12 +50,6 @@ def cycle() -> None:
 
     if "Added 0 new posts" in (export.stdout or ""):
         return  # buffer fine, nothing to push
-
-    try:
-        git("pull", "--rebase", "--autostash")
-    except Exception as exc:  # noqa: BLE001
-        print(f"    git pull failed, retrying next cycle: {exc}")
-        return
 
     git("add", "queue/")
     commit = git("commit", "-m", "queue: auto top-up", check=False)
